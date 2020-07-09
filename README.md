@@ -1,3 +1,2 @@
 # cloudstore
-CloudStore
-Test
+Distributed Cloud Storage Hub
