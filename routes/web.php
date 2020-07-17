@@ -23,3 +23,5 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 // Administration
 Route::get('/admin/dashboard', 'AdminDashboardController@index')->middleware('admin');
+Route::get('/admin/drives', 'DrivesController@drives')->middleware('admin');
+Route::post('/admin/drives/save', 'DrivesController@save')->middleware('admin');

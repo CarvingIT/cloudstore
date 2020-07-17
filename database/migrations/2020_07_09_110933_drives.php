@@ -15,7 +15,7 @@ class Drives extends Migration
     {
         Schema::create('drives', function (Blueprint $table) {
             $table->id();
-            $table->enum('choices', ['Google Drive', 'AWS S3']);
+            $table->enum('type', ['Google Drive', 'AWS S3']);
             $table->string('name');
             $table->text('credentials');
             $table->timestamps();
