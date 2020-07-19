@@ -21,4 +21,10 @@ class DrivesController extends Controller
         return redirect('/admin/drives');
     }
 
+    public function delete($drive_id){
+        $d = Drive::find($drive_id);
+        $d->delete(); 
+        return redirect('/admin/drives');
+    }
+
 }

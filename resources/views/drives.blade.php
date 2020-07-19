@@ -78,7 +78,7 @@
                                 <td>{{ $drive->created_at }}</td>
                                 <td>
                                     <span class="ui-icon ui-icon-pencil"></span>
-                                    <span class="ui-icon ui-icon-trash"></span>
+                                    <a href="/admin/drives/delete/{{ $drive->id }}"><span class="ui-icon ui-icon-trash"></span></a>
                                 </td>
                             </tr>
                         @endforeach
@@ -87,24 +87,20 @@
 
                     <script>
                     $(document).ready(function() {
-                    $('#drives').DataTable();
+                        $('#drives').DataTable( {
+                            "columnDefs": [
+                            { "orderable": false, "targets": 3 }
+                            ]
+                        });
                     } );
                     
                     $( function() {
                         dialog = $( "#driveform" ).dialog(
                             {
                                 autoOpen: false,
-                                height: 400,
+                                height: 350,
                                 width: 500,
                                 modal: true,
-                                /*
-                                buttons: {
-                                    "Add": addDrive,
-                                    Cancel: function() {
-                                    dialog.dialog( "close" );
-                                    }
-                                },
-                                */
                             }
                         );
                         $( "#loadform" ).on( "click", function() {

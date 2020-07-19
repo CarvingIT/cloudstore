@@ -19,6 +19,7 @@ class Drives extends Migration
             $table->string('name');
             $table->text('credentials');
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('files', function (Blueprint $table){
@@ -36,6 +37,9 @@ class Drives extends Migration
      */
     public function down()
     {
+        Schema::table('drives', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
         Schema::dropIfExists('files');
         Schema::dropIfExists('drives');
     }
