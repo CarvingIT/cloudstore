@@ -8,7 +8,8 @@ use App\Drive;
 class DrivesController extends Controller
 {
     public function drives(Request $request){
-        return view('drives');
+        $drives = Drive::all();
+        return view('drives', ['drives'=>$drives]);
     }
 
     public function save(Request $request){
@@ -19,4 +20,5 @@ class DrivesController extends Controller
         $d->save();
         return redirect('/admin/drives');
     }
+
 }
