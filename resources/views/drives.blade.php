@@ -56,7 +56,7 @@
             <div class="card">
                 <div class="card-header">
                 {{ __('Drives') }}
-                <div class="icons" style="float:right;">
+                <div class="card-header-icons">
                     <a href="#" id="loadform"><span class="ui-icon ui-icon-plusthick"></span></a>
                 </div>
                 </div>

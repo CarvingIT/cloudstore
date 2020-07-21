@@ -27,4 +27,25 @@ class DrivesController extends Controller
         return redirect('/admin/drives');
     }
 
+    public function selectDrive(Request $request){
+        $drives = Drive::all();
+        return view('select-drive', ['drives'=>$drives->keyBy('id')]);
+    }
+
+    public function setDrive(Request $request){
+        $user_id = \Auth::user()->id;
+        $user_settings = \Auth::user()->settings->keyBy('key');
+        if(empty($user_settings['current_drive'])){
+            $setting = new \App\UserSettings();
+            $setting->user_id = \Auth::user()->id;
+            $setting->key = 'current_drive';
+        }
+        else{
+            $setting = \App\UserSettings::find($user_settings['current_drive']->id);
+        }
+        $setting->value = $request->drive;
+        $setting->save(); 
+        return redirect('home');
+    }
+
 }

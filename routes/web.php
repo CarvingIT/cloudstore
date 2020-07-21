@@ -20,6 +20,8 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/select-drive', 'DrivesController@selectDrive');
+Route::post('/set-drive', 'DrivesController@setDrive');
 
 // Administration
 Route::get('/admin/dashboard', 'AdminDashboardController@index')->middleware('admin');

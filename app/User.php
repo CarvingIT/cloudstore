@@ -55,4 +55,8 @@ class User extends Authenticatable
         return false;
     }
 
+    public function settings(){
+        return $this->hasMany('App\UserSettings');
+    }
+    
 }
