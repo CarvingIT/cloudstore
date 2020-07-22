@@ -4,9 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Drive;
+use App\Http\Controllers\GoogleDriveController;
 
 class DrivesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function drives(Request $request){
         $drives = Drive::all();
         return view('drives', ['drives'=>$drives]);
@@ -48,4 +54,20 @@ class DrivesController extends Controller
         return redirect('home');
     }
 
+    public function listFiles(Request $request){
+        $drive = $this->getCloudStoreController();
+        $cloud_controller = $drive->type.'Controller';
+        //$cloud_controller_instance = new $cloud_controller($drive->credentials);
+        $cloud_controller_instance = new GoogleDriveController($drive);
+        $list = $cloud_controller_instance->listFiles();
+        print_r($list);
+    }
+
+    private function getCloudStoreController(){
+        $user_settings = \Auth::user()->settings->keyBy('key');
+        if(!empty($user_settings['current_drive'])){
+            $drive = \App\Drive::find($user_settings['current_drive']->id);
+            return $drive;
+        }
+    }
 }

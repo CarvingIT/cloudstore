@@ -23,6 +23,8 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/select-drive', 'DrivesController@selectDrive');
 Route::post('/set-drive', 'DrivesController@setDrive');
 
+Route::get('/list-files', 'DrivesController@listFiles');
+
 // Administration
 Route::get('/admin/dashboard', 'AdminDashboardController@index')->middleware('admin');
 Route::get('/admin/drives', 'DrivesController@drives')->middleware('admin');

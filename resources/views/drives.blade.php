@@ -27,8 +27,8 @@
 
                             <div class="col-md-6">
                                 <select class="form-control" name="type">
-                                    <option>Google Drive</option>
-                                    <option>AWS S3</option>
+                                    <option>GoogleDrive</option>
+                                    <option>AWS_S3</option>
                                 </select>
                             </div>
                         </div>
