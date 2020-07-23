@@ -55,19 +55,22 @@ class DrivesController extends Controller
     }
 
     public function listFiles(Request $request){
-        $drive = $this->getCloudStoreController();
-        $cloud_controller = $drive->type.'Controller';
-        //$cloud_controller_instance = new $cloud_controller($drive->credentials);
-        $cloud_controller_instance = new GoogleDriveController($drive);
-        $list = $cloud_controller_instance->listFiles();
-        print_r($list);
+        $cloud_controller_instance = $this->getCloudController();
+        $list = $cloud_controller_instance->listFiles($request);
+        echo $list;
     }
 
-    private function getCloudStoreController(){
+    private function getCloudController(){
         $user_settings = \Auth::user()->settings->keyBy('key');
         if(!empty($user_settings['current_drive'])){
             $drive = \App\Drive::find($user_settings['current_drive']->id);
-            return $drive;
+            if($drive->type == 'GoogleDrive'){
+                $cloud_controller_instance = new GoogleDriveController($drive);
+                return $cloud_controller_instance;
+            }
+            else{
+                return false;
+            }
         }
     }
 }
