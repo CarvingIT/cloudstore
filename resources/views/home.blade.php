@@ -1,17 +1,20 @@
 @extends('layouts.app')
 
 @section('content')
+@push('scripts')
                     <script type="application/javascript">
                     $(document).ready(function() {
                         $('#cloudfiles').DataTable({
-                        "retrieve": true,
                         "aoColumnDefs": [
                             { "bSortable": false, "aTargets": [3]},
                             { "className": 'text-right', "aTargets": [1,2]},
                             { "className": 'td-actions text-right', "aTargets": [3]}
                         ],
+                        "pagingType": "simple",
+                        "info" : false,
                         "order": [[ 2, "desc" ]],
                         "serverSide":true,
+                        "processing":true,
                         "ajax":'/list-files',
                         "columns":[
                         {data:"filename"},
@@ -22,7 +25,7 @@
                         });
                     } );
                     </script>
-
+@endpush
                                 @php
                                     $settings = Auth::user()->settings->keyBy('key');
                                     $drives = $drives->keyBy('id');

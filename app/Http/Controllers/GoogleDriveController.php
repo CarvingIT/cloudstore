@@ -34,17 +34,39 @@ class GoogleDriveController extends Controller
         return $client;
     }
 
-    public function listFiles($request){
+    public function listFiles(Request $request){
         $client = $this->getClient();
         $service = new Google_Service_Drive($client);
-        if(empty($params)){
-            $params = array('pageSize'=>'10',
-                'orderBy'=> 'modifiedTime desc',
-                'fields' => '*',
-                //'q' => 'name contains "sql.gz"'
-                );
+        $columns = array('name', 'quotaBytesUsed', 'modifiedTime', 'actions');
+
+        $sort_column = 'modifiedTime';
+        $sort_dir = 'desc';
+
+        $sort_column = $columns[$request->order[0]['column']];
+        $sort_dir = $request->order[0]['dir'];
+
+        $params = array('pageSize'=>$request->length,
+            'orderBy'=> "$sort_column $sort_dir",
+            'fields' => '*',
+            );
+        if($request->start != 0){
+            if($request->start > $request->session()->get('start')){
+                $params['pageToken'] = $request->session()->get('next_page_token');
+            }
+            else{
+                $params['pageToken'] = $request->session()->get('previous_page_token');
+            }
         }
+    
+        if(!empty($request->search['value'])){
+            $params['q'] = 'name contains "'.$request->search['value'].'"';
+        }
+        if(!empty($params['pageToken'])){
+            $request->session()->put('previous_page_token', $params['pageToken']);
+        }
+        $request->session()->put('start', $request->start);
         $list = $service->files->listFiles($params);
+        $request->session()->put('next_page_token', $list->nextPageToken);
 
         $results_data = array();
         foreach($list as $l){
@@ -53,12 +75,24 @@ class GoogleDriveController extends Controller
                     'updated_at'=>$l->modifiedTime, 
                     'actions'=>'none');
         }
+        $total_records = (int)$request->length;
+        $filtered_records = (int)$request->length;
+        if(!empty($list->nextPageToken)){
+            $total_records += 10000;
+            $filtered_records += 10000;
+        }
         $results = array(
             'data'=>$results_data,
-            'draw'=>(int) 1,
-            'recordsTotal'=> 100,
-            'recordsFiltered' => 10,
+            'draw'=>(int) $request->draw,
+            'recordsTotal'=> $total_records,
+            'recordsFiltered' => $filtered_records,
+            /*
+            'recordsTotal'=> 'unknown',
+            'recordsFiltered' => 'unknown',
+            */
+            /*
             'error'=> '',
+            */
         );
         return json_encode($results);
     }

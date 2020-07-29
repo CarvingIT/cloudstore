@@ -25,7 +25,7 @@
     <link href="{{ asset('css/jquery.dataTables.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/uikit.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/dataTables.uikit.min.css') }}" rel="stylesheet">
-
+@stack('scripts')
 </head>
 <body>
     <div id="app">
