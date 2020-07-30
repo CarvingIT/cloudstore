@@ -63,7 +63,7 @@ class DrivesController extends Controller
     private function getCloudController(){
         $user_settings = \Auth::user()->settings->keyBy('key');
         if(!empty($user_settings['current_drive'])){
-            $drive = \App\Drive::find($user_settings['current_drive']->id);
+            $drive = \App\Drive::find($user_settings['current_drive']->value);
             if($drive->type == 'GoogleDrive'){
                 $cloud_controller_instance = new GoogleDriveController($drive);
                 return $cloud_controller_instance;
