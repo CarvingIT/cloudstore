@@ -23,10 +23,12 @@ class HomeController extends Controller
      */
     public function index()
     {
+        /*
         $settings = \Auth::user()->settings->keyBy('key');
         if(empty($settings['current_drive']->value)){
             return redirect('/select-drive');
         }
-        return view('home', ['drives'=>\App\Drive::all()]);
+        */
+        return view('home');
     }
 }

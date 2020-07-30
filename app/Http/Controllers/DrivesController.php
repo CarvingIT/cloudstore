@@ -73,4 +73,12 @@ class DrivesController extends Controller
             }
         }
     }
+
+    public function browse(){
+        $settings = \Auth::user()->settings->keyBy('key');
+        if(empty($settings['current_drive']->value)){
+            return redirect('/select-drive');
+        }
+        return view('browse-drive', ['drives'=>\App\Drive::all()]);
+    }
 }
