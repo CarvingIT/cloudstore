@@ -53,6 +53,9 @@ class GoogleDriveController extends Controller
             if($request->start > $request->session()->get('start')){
                 $params['pageToken'] = $request->session()->get('next_page_token');
             }
+            else if($request->start == $request->session()->get('start')){
+                $params['pageToken'] = $request->session()->get('current_page_token');
+            }
             else{
                 $params['pageToken'] = $request->session()->get('previous_page_token');
             }
@@ -62,7 +65,8 @@ class GoogleDriveController extends Controller
             $params['q'] = 'name contains "'.$request->search['value'].'"';
         }
         if(!empty($params['pageToken'])){
-            $request->session()->put('previous_page_token', $params['pageToken']);
+            $request->session()->put('previous_page_token', $request->session()->get('current_page_token'));
+            $request->session()->put('current_page_token', $params['pageToken']);
         }
         $request->session()->put('start', $request->start);
         $list = $service->files->listFiles($params);
