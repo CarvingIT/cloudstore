@@ -19,8 +19,11 @@
                             {{ session('status') }}
                         </div>
                     @endif
+                    <h4>Cloud Drives</h4>
                     <ul>
-                        <li><a href="/browse-drive">Browse Cloud Drive</a></li>
+                        @foreach ($drives as $d)
+                        <li><a href="/browse-drive/{{ $d->id }}">{{ $d->name }}</a></li>
+                        @endforeach
                     </ul>
                 </div>
             </div>

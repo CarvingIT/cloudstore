@@ -53,7 +53,12 @@
             </div>
             <div class="card">
                 <div class="card-header">
-                <a href="/admin/dashboard">Administration</a> :: {{ __('Drives') }}
+                @if(Auth::user()->hasRole('admin'))
+                <a href="/admin/dashboard"><span class="ui-icon ui-icon-gear"></span></a> 
+                @else
+                <a href="/home"><span class="ui-icon ui-icon-home"></span></a> 
+                @endif
+                :: {{ __('Drives') }}
                 <div class="card-header-icons">
                     <a href="#" id="loadform"><span class="ui-icon ui-icon-plusthick"></span></a>
                 </div>
@@ -75,8 +80,13 @@
                                 <td>{{ $drive->type }}</td>
                                 <td>{{ $drive->created_at }}</td>
                                 <td>
+                                    @if(Auth::user()->hasRole('admin'))
+                                    <a href="/browse-drive/{{ $drive->id }}"><span class="ui-icon ui-icon-arrow-1-e"></a></span>
                                     <span class="ui-icon ui-icon-pencil"></span>
                                     <a href="/admin/drive/delete/{{ $drive->id }}"><span class="ui-icon ui-icon-trash"></span></a>
+                                    @else
+                                    <a href="/browse-drive/{{ $drive->id }}"><span class="ui-icon ui-icon-arrow-1-e"></a></span>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

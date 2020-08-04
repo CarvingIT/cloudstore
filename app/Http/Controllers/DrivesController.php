@@ -33,6 +33,7 @@ class DrivesController extends Controller
         return redirect('/admin/drives');
     }
 
+    /*
     public function selectDrive(Request $request){
         $drives = Drive::all();
         return view('select-drive', ['drives'=>$drives->keyBy('id')]);
@@ -53,32 +54,26 @@ class DrivesController extends Controller
         $setting->save(); 
         return redirect('home');
     }
+    */
 
-    public function listFiles(Request $request){
-        $cloud_controller_instance = $this->getCloudController();
+    public function listFiles(Request $request, $drive_id){
+        $cloud_controller_instance = $this->getCloudController($drive_id);
         $list = $cloud_controller_instance->listFiles($request);
         echo $list;
     }
 
-    private function getCloudController(){
-        $user_settings = \Auth::user()->settings->keyBy('key');
-        if(!empty($user_settings['current_drive'])){
-            $drive = \App\Drive::find($user_settings['current_drive']->value);
-            if($drive->type == 'GoogleDrive'){
-                $cloud_controller_instance = new GoogleDriveController($drive);
-                return $cloud_controller_instance;
-            }
-            else{
-                return false;
-            }
+    private function getCloudController($drive_id){
+        $drive = Drive::find($drive_id);
+        if($drive->type == 'GoogleDrive'){
+            $cloud_controller_instance = new GoogleDriveController($drive);
+            return $cloud_controller_instance;
+        }
+        else{
+            return false;
         }
     }
 
-    public function browse(){
-        $settings = \Auth::user()->settings->keyBy('key');
-        if(empty($settings['current_drive']->value)){
-            return redirect('/select-drive');
-        }
-        return view('browse-drive', ['drives'=>\App\Drive::all()]);
+    public function browse($drive_id){
+        return view('browse-drive', ['drive'=>\App\Drive::find($drive_id)]);
     }
 }

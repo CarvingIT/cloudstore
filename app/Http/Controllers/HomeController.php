@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Drive;
 
 class HomeController extends Controller
 {
@@ -23,12 +24,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-        /*
-        $settings = \Auth::user()->settings->keyBy('key');
-        if(empty($settings['current_drive']->value)){
-            return redirect('/select-drive');
-        }
-        */
-        return view('home');
+        return view('home', ['drives'=> Drive::all()]);
     }
 }

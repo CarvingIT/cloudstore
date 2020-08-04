@@ -58,11 +58,10 @@ class GoogleDriveController extends Controller
         $service = new Google_Service_Drive($client);
         $columns = array('name', 'quotaBytesUsed', 'modifiedTime', 'actions');
 
-        $sort_column = 'modifiedTime';
-        $sort_dir = 'desc';
-
-        $sort_column = $columns[$request->order[0]['column']];
-        $sort_dir = $request->order[0]['dir'];
+        $column_num = empty($request->order[0]['column'])?2:$request->order[0]['column'];
+        $sort_column = empty($columns[$column_num])?
+                'modifiedTime':$columns[$column_num];
+        $sort_dir = empty($request->order[0]['dir'])?'desc': $request->order[0]['dir'];
 
         $params = array('pageSize'=>$request->length,
             'orderBy'=> "$sort_column $sort_dir",

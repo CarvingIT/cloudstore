@@ -15,7 +15,7 @@
                         "order": [[ 2, "desc" ]],
                         "serverSide":true,
                         "processing":true,
-                        "ajax":'/list-files',
+                        "ajax":'/list-files/{{ $drive->id }}',
                         "columns":[
                         {data:"filename"},
                         {data:"size", },
@@ -26,17 +26,15 @@
                     } );
                     </script>
 @endpush
-                                @php
-                                    $settings = Auth::user()->settings->keyBy('key');
-                                    $drives = $drives->keyBy('id');
-                                @endphp
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header"><a href="home">Home</a> :: {{ __('Files in ') }}{{ $drives[$settings['current_drive']->value]->name }}
+                <div class="card-header"><a href="/home">Home</a> :: {{ __('Files in ') }}{{ $drive->name }}
                     <div class="card-header-icons">
+                    <!--
                     <a href="/select-drive" title="Change drive"><span class="ui-icon ui-icon-disk"></span></a>
+                    -->
                     </div>
                 </div>
 
