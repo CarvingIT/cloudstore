@@ -30,7 +30,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header"><a href="/home">Home</a> :: {{ __('Files in ') }}{{ $drive->name }}
+                <div class="card-header"><a href="/home"><span class="ui-icon ui-icon-home"></span></a> :: {{ __('Browsing ') }}<strong>{{ $drive->name }}</strong>
                     <div class="card-header-icons">
                     <!--
                     <a href="/select-drive" title="Change drive"><span class="ui-icon ui-icon-disk"></span></a>

@@ -53,7 +53,19 @@ class GoogleDriveController extends Controller
         return $file;
     }
 
-    public function listFiles(Request $request){
+    public function deleteFile(Request $request, $drive_id, $file_id){
+        $client = $this->getClient();
+        $service = new Google_Service_Drive($client);
+        try {
+            $service->files->delete($file_id);
+        } catch (Exception $e) {
+            //print "An error occurred: " . $e->getMessage();
+            return false;
+        }
+        return redirect('/browse-drive/'.$drive_id);
+    }
+
+    public function listFiles(Request $request, $drive_id){
         $client = $this->getClient();
         $service = new Google_Service_Drive($client);
         $columns = array('name', 'quotaBytesUsed', 'modifiedTime', 'actions');
@@ -91,11 +103,16 @@ class GoogleDriveController extends Controller
         $request->session()->put('next_page_token', $list->nextPageToken);
 
         $results_data = array();
+        
         foreach($list as $l){
+            $actions = '<a class="sharefile" title="share"><span class="ui-icon ui-icon-mail-closed"></span></a>';
+            if(\Auth::user()->hasRole('admin')){
+                $actions .= '<a title="delete" href="/drive/'.$drive_id.'/delete-file/'.$l->id.'"><span class="ui-icon ui-icon-trash"></span></a>';
+            }
             $results_data[] = array('filename'=>$l->name, 
                     'size'=>$l->size, 
                     'updated_at'=>$l->modifiedTime, 
-                    'actions'=>'none');
+                    'actions'=>$actions);
         }
         $total_records = (int)$request->length;
         $filtered_records = (int)$request->length;

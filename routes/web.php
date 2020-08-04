@@ -38,3 +38,5 @@ Route::get('/admin/drive/delete/{drive_id}', 'DrivesController@delete')->middlew
 Route::get('/admin/sources', 'SourcesController@index')->middleware('admin');
 Route::post('/admin/source/save', 'SourcesController@save')->middleware('admin');
 Route::get('/admin/source/delete/{source_id}', 'SourcesController@delete')->middleware('admin');
+
+Route::get('/drive/{drive_id}/delete-file/{file_id}', 'DrivesController@deleteFile')->middleware('admin');
