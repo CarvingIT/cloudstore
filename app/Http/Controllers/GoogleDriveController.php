@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 use Google_Service_Drive;
+use Google_Service_Drive_DriveFile;
 use Google_Client;
+use App\Helper;
 
 class GoogleDriveController extends Controller
 {
@@ -25,13 +27,30 @@ class GoogleDriveController extends Controller
     private function getClient() {
         $client = new Google_Client();
         $client->setApplicationName($this->appName);
-        $filename = 'google-service-account_'.$this->drive->id;
-        Storage::disk('private')->put($filename, $this->drive->credentials);
+        $process_user = posix_getpwuid(posix_geteuid());
+        $filename = $process_user['name'].'_google-service-account_'.$this->drive->id;
+        if (!Storage::disk('private')->has($filename)){
+            Storage::disk('private')->put($filename, $this->drive->credentials);
+        }
         $path = Storage::disk('private')->getDriver()->getAdapter()->getPathPrefix();
         putenv('GOOGLE_APPLICATION_CREDENTIALS='.$path.$filename);
         $client->useApplicationDefaultCredentials();
         $client->setScopes($this->scopes);
         return $client;
+    }
+
+    public function upload($path){ 
+        $client = $this->getClient();
+        $service = new Google_Service_Drive($client);
+        $fileMetadata = new Google_Service_Drive_DriveFile(array('name' => basename($path)));
+        $content = file_get_contents($path);
+        $file = $service->files->create($fileMetadata, array(
+         'data'       => $content,
+         'mimeType'   => mime_content_type($path), 
+         'uploadType' => 'multipart',
+         'fields'     => 'id')
+        );
+        return $file;
     }
 
     public function listFiles(Request $request){
