@@ -3,40 +3,46 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div id="driveform" title="Drive info" class="card">
+            <div id="sourceform" title="Source info" class="card">
                 <div class="card-body">
                     @if (session('status'))
                         <div class="alert alert-success" role="alert">
                             {{ session('status') }}
                         </div>
                     @endif
-                    <form method="POST" action="/admin/drive/save">
+                    <form method="POST" action="/admin/source/save">
                         @csrf
-
                         <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
-
                             <div class="col-md-6">
-                                <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
+                                <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus>
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label for="type" class="col-md-4 col-form-label text-md-right">{{ __('Type') }}</label>
-
                             <div class="col-md-6">
                                 <select class="form-control" name="type">
-                                    <option>GoogleDrive</option>
-                                    <option>AWS_S3</option>
+                                    <option value="local">Local</option>
+                                    <option value="ssh">Remote (Secure Shell)</option>
+                                    <option value="ftp">Remote (FTP)</option>
                                 </select>
                             </div>
                         </div>
-
                         <div class="form-group row">
-                            <label for="creds" class="col-md-4 col-form-label text-md-right">{{ __('Credentials') }}</label>
-
+                            <label for="path" class="col-md-4 col-form-label text-md-right">{{ __('Path') }}</label>
                             <div class="col-md-6">
-                                <textarea id="creds" name="creds" class="form-control" value="{{ old('creds') }}" required></textarea>
+                                <input id="path" type="text" class="form-control" name="path" value="{{ old('path') }}" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="drive_id" class="col-md-4 col-form-label text-md-right">{{ __('Mapped Drive') }}</label>
+                            <div class="col-md-6">
+                                <select class="form-control" name="drive_id">
+                                @foreach($drives as $drive)
+                                <option value="{{ $drive->id }}">{{ $drive->name }}</option>
+                                @endforeach
+                                </select>
                             </div>
                         </div>
 
@@ -47,19 +53,18 @@
                                 </button>
                             </div>
                         </div>
-
                     </form>
                 </div>
             </div>
             <div class="card">
                 <div class="card-header">
-                <a href="/admin/dashboard">Administration</a> :: {{ __('Drives') }}
+                <a href="/admin/dashboard">Administration</a> :: {{ __('Sources') }}
                 <div class="card-header-icons">
                     <a href="#" id="loadform"><span class="ui-icon ui-icon-plusthick"></span></a>
                 </div>
                 </div>
                 <div class="card-body">
-                    <table id="drives" class="display" style="width:100%">
+                    <table id="sources" class="display" style="width:100%">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -69,14 +74,14 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach ( $drives as $drive)
+                        @foreach ( $sources as $source)
                             <tr>
-                                <td>{{ $drive->name }}</td>
-                                <td>{{ $drive->type }}</td>
-                                <td>{{ $drive->created_at }}</td>
+                                <td>{{ $source->name }}</td>
+                                <td>{{ $source->type }}</td>
+                                <td>{{ $source->created_at }}</td>
                                 <td>
                                     <span class="ui-icon ui-icon-pencil"></span>
-                                    <a href="/admin/drive/delete/{{ $drive->id }}"><span class="ui-icon ui-icon-trash"></span></a>
+                                    <a href="/admin/source/delete/{{ $source->id }}"><span class="ui-icon ui-icon-trash"></span></a>
                                 </td>
                             </tr>
                         @endforeach
@@ -85,7 +90,7 @@
 
                     <script>
                     $(document).ready(function() {
-                        $('#drives').DataTable( {
+                        $('#sources').DataTable( {
                             "columnDefs": [
                             { "orderable": false, "targets": 3 }
                             ]
@@ -93,7 +98,7 @@
                     } );
                     
                     $( function() {
-                        dialog = $( "#driveform" ).dialog(
+                        dialog = $( "#sourceform" ).dialog(
                             {
                                 autoOpen: false,
                                 height: 350,

@@ -16,6 +16,7 @@
 
                     <ul>
                         <li><a href="/admin/drives">Drive management</a></li>
+                        <li><a href="/admin/sources">Source management</a></li>
                     </ul>
                 </div>
             </div>

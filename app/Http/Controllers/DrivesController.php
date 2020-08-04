@@ -13,7 +13,7 @@ class DrivesController extends Controller
         $this->middleware('auth');
     }
 
-    public function drives(Request $request){
+    public function index(Request $request){
         $drives = Drive::all();
         return view('drives', ['drives'=>$drives]);
     }

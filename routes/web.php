@@ -28,6 +28,10 @@ Route::get('/list-files', 'DrivesController@listFiles');
 
 // Administration
 Route::get('/admin/dashboard', 'AdminDashboardController@index')->middleware('admin');
-Route::get('/admin/drives', 'DrivesController@drives')->middleware('admin');
-Route::post('/admin/drives/save', 'DrivesController@save')->middleware('admin');
-Route::get('/admin/drives/delete/{drive_id}', 'DrivesController@delete')->middleware('admin');
+Route::get('/admin/drives', 'DrivesController@index')->middleware('admin');
+Route::post('/admin/drive/save', 'DrivesController@save')->middleware('admin');
+Route::get('/admin/drive/delete/{drive_id}', 'DrivesController@delete')->middleware('admin');
+
+Route::get('/admin/sources', 'SourcesController@index')->middleware('admin');
+Route::post('/admin/source/save', 'SourcesController@save')->middleware('admin');
+Route::get('/admin/source/delete/{source_id}', 'SourcesController@delete')->middleware('admin');
