@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Source;
 use App\Drive;
+use App\UploadRecord;
 use App\Http\Controllers\GoogleDriveController;
 
 class upload extends Command
@@ -56,6 +57,15 @@ class upload extends Command
                     //echo $f." - ".$ftype."\n";
                     if($ftype == 'file'){
                         $cloud_file = $c->upload($path.'/'.$f);
+                        
+                        $upload_entry = new UploadRecord();
+                        $upload_entry->path = $path.'/'.$f;
+                        $upload_entry->size = filesize($path.'/'.$f);
+                        $upload_entry->cloud_file_id = $cloud_file->id;
+                        $upload_entry->modification_time = date ("Y-m-d H:i:s.", filemtime($path.'/'.$f));
+                        $upload_entry->drive_id = $s->drive_id;
+                        $upload_entry->remote_path = $f;
+                        $upload_entry->save();
                         echo $f ."\t".$cloud_file->id."\n";
                     }
                 }
