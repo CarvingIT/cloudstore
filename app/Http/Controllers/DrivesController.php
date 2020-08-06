@@ -38,6 +38,11 @@ class DrivesController extends Controller
         return $cloud_controller_instance->deleteFile($request, $drive_id, $file_id);
     }
 
+    public function shareFile(Request $request, $drive_id){
+        $cloud_controller_instance = $this->getCloudController($drive_id);
+        return $cloud_controller_instance->shareFile($request, $drive_id);
+    }
+
     public function listFiles(Request $request, $drive_id){
         $cloud_controller_instance = $this->getCloudController($drive_id);
         $list = $cloud_controller_instance->listFiles($request, $drive_id);

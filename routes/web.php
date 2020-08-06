@@ -40,3 +40,4 @@ Route::post('/admin/source/save', 'SourcesController@save')->middleware('admin')
 Route::get('/admin/source/delete/{source_id}', 'SourcesController@delete')->middleware('admin');
 
 Route::get('/drive/{drive_id}/delete-file/{file_id}', 'DrivesController@deleteFile')->middleware('admin');
+Route::post('/drive/{drive_id}/share-file', 'DrivesController@shareFile');

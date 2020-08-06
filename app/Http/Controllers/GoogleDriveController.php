@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 
 use Google_Service_Drive;
 use Google_Service_Drive_DriveFile;
+use Google_Service_Drive_Permission;
 use Google_Client;
 use App\Helper;
 
@@ -65,6 +66,29 @@ class GoogleDriveController extends Controller
         return redirect('/browse-drive/'.$drive_id);
     }
 
+    public function shareFile(Request $request, $drive_id){
+        $client = $this->getClient();
+        $service = new Google_Service_Drive($client);
+
+        $this->insertPermission($request->file_id, $request->email, 'user', 'reader');
+        return redirect('/browse-drive/'.$drive_id);
+    }
+
+    public  function insertPermission($fileId, $email, $type, $role) {
+        $client = $this->getClient();
+        $service = new Google_Service_Drive($client);
+        $newPermission = new Google_Service_Drive_Permission();
+        $newPermission->setEmailAddress($email);
+        $newPermission->setType($type);
+        $newPermission->setRole($role);
+        try {
+            return $service->permissions->create($fileId, $newPermission);
+        } catch (Exception $e) {
+            //print "An error occurred: " . $e->getMessage();
+        }
+        return NULL;
+    }
+
     public function listFiles(Request $request, $drive_id){
         $client = $this->getClient();
         $service = new Google_Service_Drive($client);
@@ -105,7 +129,8 @@ class GoogleDriveController extends Controller
         $results_data = array();
         
         foreach($list as $l){
-            $actions = '<a class="sharefile" title="share"><span class="ui-icon ui-icon-mail-closed"></span></a>';
+            $actions = '<a class="sharefile" onclick="openShareDialog(\''.$l->name.'\', \''.$l->id.'\');" title="share"><span class="ui-icon ui-icon-mail-closed"></span></a>';
+            //$actions = '<span class="ui-icon ui-icon-mail-closed"></span>';
             if(\Auth::user()->hasRole('admin')){
                 $actions .= '<a title="delete" href="/drive/'.$drive_id.'/delete-file/'.$l->id.'"><span class="ui-icon ui-icon-trash"></span></a>';
             }
