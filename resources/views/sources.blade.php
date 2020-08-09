@@ -3,14 +3,14 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div id="sourceform" title="Source info" class="card">
+            <div id="sourceform" title="Configure a directory on this server for back up" class="card">
                 <div class="card-body">
                     <form method="POST" action="/admin/source/save">
                         @csrf
                         <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
                             <div class="col-md-6">
-                                <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus>
+                                <input id="name" type="text" class="form-control" name="name" value="" required autofocus>
                                 <input type="hidden" name="type" value="local" />
                             </div>
                         </div>
@@ -49,7 +49,7 @@
                         <div class="form-group row">
                             <label for="namessh" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
                             <div class="col-md-6">
-                                <input id="namessh" type="text" class="form-control" name="namessh" value="" required>
+                                <input id="namessh" type="text" class="form-control" name="name" value="" required>
                                 <input type="hidden" name="type" value="ssh" />
                             </div>
                         </div>
@@ -81,14 +81,14 @@
                         <div class="form-group row">
                             <label for="pathssh" class="col-md-4 col-form-label text-md-right">{{ __('Remote directory') }}</label>
                             <div class="col-md-6">
-                                <input id="pathssh" type="text" class="form-control" name="pathssh" value="{{ old('path') }}" required>
+                                <input id="pathssh" type="text" class="form-control" name="pathssh" value="" required>
                             </div>
                         </div>
                         <hr />
                         <div class="form-group row">
                             <label for="drive_idssh" class="col-md-4 col-form-label text-md-right">{{ __('Mapped Drive') }}</label>
                             <div class="col-md-6">
-                                <select class="form-control" id="drive_idssh" name="drive_idssh">
+                                <select class="form-control" id="drive_idssh" name="drive_id">
                                 @foreach($drives as $drive)
                                 <option value="{{ $drive->id }}">{{ $drive->name }}</option>
                                 @endforeach
@@ -114,7 +114,7 @@
                         <div class="form-group row">
                             <label for="nameftp" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
                             <div class="col-md-6">
-                                <input id="nameftp" type="text" class="form-control" name="nameftp" value="" required>
+                                <input id="nameftp" type="text" class="form-control" name="name" value="" required>
                                 <input type="hidden" name="type" value="ftp" />
                             </div>
                         </div>
@@ -153,7 +153,7 @@
                         <div class="form-group row">
                             <label for="drive_idftp" class="col-md-4 col-form-label text-md-right">{{ __('Mapped Drive') }}</label>
                             <div class="col-md-6">
-                                <select id="drive_idftp" class="form-control" name="drive_idftp">
+                                <select id="drive_idftp" class="form-control" name="drive_id">
                                 @foreach($drives as $drive)
                                 <option value="{{ $drive->id }}">{{ $drive->name }}</option>
                                 @endforeach

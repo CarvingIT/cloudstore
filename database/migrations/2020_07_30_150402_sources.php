@@ -17,7 +17,7 @@ class Sources extends Migration
             $table->id();
             $table->string('name');
             $table->string('type');
-            $table->text('credentials')->nullable();
+            $table->text('details')->nullable();
             $table->foreignId('drive_id');
             $table->timestamps();
         });

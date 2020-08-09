@@ -44,14 +44,14 @@ class upload extends Command
         $sources = Source::where('type','local')->get();
         foreach($sources as $s){
             $drive = Drive::find($s->drive_id);
-            $creds = json_decode($s->credentials);
+            $details = json_decode($s->details);
             if($drive->type == 'GoogleDrive'){
                 $c = new GoogleDriveController($drive);
-                $path = $creds->path;
+                $path = $details->path;
                 echo 'Source: '. $s->name."\nDirectory: ". 
                 $path."\nCloud drive: ". $drive->name . " (".$drive->type.")\n";
                 // get list of files
-                $files = scandir($creds->path);
+                $files = scandir($details->path);
                 foreach($files as $f){
                     $ftype = filetype($path.'/'.$f);
                     //echo $f." - ".$ftype."\n";

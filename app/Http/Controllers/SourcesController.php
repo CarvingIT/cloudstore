@@ -22,10 +22,28 @@ class SourcesController extends Controller
         $s = new Source();
         $s->name = $request->name;
         $s->type = $request->type;
-        $credentials = array();
-        $credentials['path'] = $request->path;
-        $s->credentials = json_encode($credentials);
         $s->drive_id = $request->drive_id;
+
+        $details = array();
+        if($request->type == 'local'){
+            $details['path'] = $request->path;
+        }
+        else if($request->type == 'ssh'){
+            $details['path'] = $request->pathssh;
+            $details['server'] = $request->serverssh;
+            $details['port'] = empty($request->portssh)? '22' : $request->portssh;
+            $details['username'] = $request->usernamessh;
+            $details['password'] = $request->passwordssh;
+        }
+        else if($request->type == 'ftp'){
+            $details['path'] = $request->pathftp;
+            $details['server'] = $request->serverftp;
+            $details['port'] = empty($request->portftp)? '21' : $request->portftp;
+            $details['username'] = $request->usernameftp;
+            $details['password'] = $request->passwordftp;
+        }
+        else{}
+        $s->details = json_encode($details);
         $s->save();
         return redirect('/admin/sources');
     }
