@@ -15,7 +15,7 @@
                         "order": [[ 2, "desc" ]],
                         "serverSide":true,
                         "processing":true,
-                        "ajax":'/list-files/{{ $drive->id }}',
+                        "ajax":'/list-files/{{ $drive->id }}/{{ $folder_id }}',
                         "columns":[
                         {data:"filename"},
                         {data:"size", },
@@ -61,9 +61,9 @@
             <div class="card">
                 <div class="card-header"><a href="/home"><span class="ui-icon ui-icon-home"></span></a> :: {{ __('Browsing ') }}<strong>{{ $drive->name }}</strong>
                     <div class="card-header-icons">
-                    <!--
-                    <a href="/select-drive" title="Change drive"><span class="ui-icon ui-icon-disk"></span></a>
-                    -->
+                    @if (!empty($folder_id))
+                    <a href="./" title="Back to root"><span class="ui-icon ui-icon-arrowreturn-1-w"></span></a>
+                    @endif
                     </div>
                 </div>
 

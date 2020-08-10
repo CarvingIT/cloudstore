@@ -28,6 +28,8 @@ Route::post('/set-drive', 'DrivesController@setDrive');
 Route::get('/cloud-drives', 'DrivesController@index');
 Route::get('/browse-drive/{drive_id}', 'DrivesController@browse');
 Route::get('/list-files/{drive_id}', 'DrivesController@listFiles');
+Route::get('/browse-drive/{drive_id}/{folder_id}', 'DrivesController@browse');
+Route::get('/list-files/{drive_id}/{folder_id}', 'DrivesController@listFiles');
 
 // Administration
 Route::get('/admin/dashboard', 'AdminDashboardController@index')->middleware('admin');

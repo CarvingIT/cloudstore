@@ -21,6 +21,12 @@
                             </div>
                         </div>
                         <div class="form-group row">
+                            <label for="target_path" class="col-md-4 col-form-label text-md-right">{{ __('Target Path') }}</label>
+                            <div class="col-md-6">
+                                <input id="target_path" type="text" class="form-control" name="target_path" value="">
+                            </div>
+                        </div>
+                        <div class="form-group row">
                             <label for="drive_id" class="col-md-4 col-form-label text-md-right">{{ __('Mapped Drive') }}</label>
                             <div class="col-md-6">
                                 <select class="form-control" name="drive_id">

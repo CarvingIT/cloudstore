@@ -40,10 +40,23 @@ class GoogleDriveController extends Controller
         return $client;
     }
 
-    public function upload($path){ 
+    public function upload($path, $parent_id=null){ 
         $client = $this->getClient();
         $service = new Google_Service_Drive($client);
-        $fileMetadata = new Google_Service_Drive_DriveFile(array('name' => basename($path)));
+        if(!empty($parent_id)){
+            $meta_data_args = array('name'=>basename($path), 'parents'=>array($parent_id));
+            /*
+            print_r(json_encode($meta_data_args));
+            exit;
+            */
+            //$parent_folder =  new Google_Service_Drive_DriveFile(array('id'=>$parent_id));
+            //$meta_data_args['parents'] = json_encode(array(array('id'=>$parent_id)));
+            //$fileMetadata->setParents(json_encode(array(array('id'=>$parent_id))));
+        }
+        else{
+            $meta_data_args = array('name'=>basename($path));
+        }
+        $fileMetadata = new Google_Service_Drive_DriveFile($meta_data_args);
         $content = file_get_contents($path);
         $file = $service->files->create($fileMetadata, array(
          'data'       => $content,
@@ -51,6 +64,17 @@ class GoogleDriveController extends Controller
          'uploadType' => 'multipart',
          'fields'     => 'id')
         );
+        return $file;
+    }
+
+    public function createDirectory($dir_name){
+        $client = $this->getClient();
+        $service = new Google_Service_Drive($client);
+        $fileMetadata = new Google_Service_Drive_DriveFile(
+                array('name' => $dir_name,
+                    'mimeType'=>"application/vnd.google-apps.folder")
+                );
+        $file = $service->files->create($fileMetadata);
         return $file;
     }
 
@@ -63,7 +87,7 @@ class GoogleDriveController extends Controller
             //print "An error occurred: " . $e->getMessage();
             return false;
         }
-        return redirect('/browse-drive/'.$drive_id);
+        return redirect()->back();
     }
 
     public function shareFile(Request $request, $drive_id){
@@ -89,9 +113,11 @@ class GoogleDriveController extends Controller
         return NULL;
     }
 
-    public function listFiles(Request $request, $drive_id){
+    public function listFiles(Request $request, $drive_id, $folder_id=null){
         $client = $this->getClient();
         $service = new Google_Service_Drive($client);
+
+        $drive_info = $service->files->get('root');
         $columns = array('name', 'quotaBytesUsed', 'modifiedTime', 'actions');
 
         $column_num = empty($request->order[0]['column'])?2:$request->order[0]['column'];
@@ -114,9 +140,11 @@ class GoogleDriveController extends Controller
                 $params['pageToken'] = $request->session()->get('previous_page_token');
             }
         }
+        if(empty($folder_id)) $folder_id = $drive_info->id;
+        $params['q'] = "'".$folder_id."' in parents ";
     
         if(!empty($request->search['value'])){
-            $params['q'] = 'name contains "'.$request->search['value'].'"';
+            $params['q'] .= 'and name contains "'.$request->search['value'].'"';
         }
         if(!empty($params['pageToken'])){
             $request->session()->put('previous_page_token', $request->session()->get('current_page_token'));
@@ -127,14 +155,18 @@ class GoogleDriveController extends Controller
         $request->session()->put('next_page_token', $list->nextPageToken);
 
         $results_data = array();
-        
         foreach($list as $l){
-            $actions = '<a class="sharefile" onclick="openShareDialog(\''.$l->name.'\', \''.$l->id.'\');" title="share"><span class="ui-icon ui-icon-mail-closed"></span></a>';
-            //$actions = '<span class="ui-icon ui-icon-mail-closed"></span>';
+            $actions = '';
+            $filename = $l->name;
+            if($l->mimeType == 'application/vnd.google-apps.folder'){
+                $actions .= '<a title="Go" href="/browse-drive/'.$drive_id.'/'.$l->id.'"><span class="ui-icon ui-icon-extlink"></span></a>';
+                $filename .= '/';
+            } 
+            $actions .= '<a class="sharefile" onclick="openShareDialog(\''.$l->name.'\', \''.$l->id.'\');" title="share"><span class="ui-icon ui-icon-mail-closed"></span></a>';
             if(\Auth::user()->hasRole('admin')){
                 $actions .= '<a title="delete" href="/drive/'.$drive_id.'/delete-file/'.$l->id.'"><span class="ui-icon ui-icon-trash"></span></a>';
             }
-            $results_data[] = array('filename'=>$l->name, 
+            $results_data[] = array('filename'=>$filename, 
                     'size'=>$l->size, 
                     'updated_at'=>$l->modifiedTime, 
                     'actions'=>$actions);
@@ -150,15 +182,7 @@ class GoogleDriveController extends Controller
             'draw'=>(int) $request->draw,
             'recordsTotal'=> $total_records,
             'recordsFiltered' => $filtered_records,
-            /*
-            'recordsTotal'=> 'unknown',
-            'recordsFiltered' => 'unknown',
-            */
-            /*
-            'error'=> '',
-            */
         );
         return json_encode($results);
     }
-
 }

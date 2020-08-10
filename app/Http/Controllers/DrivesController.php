@@ -43,9 +43,9 @@ class DrivesController extends Controller
         return $cloud_controller_instance->shareFile($request, $drive_id);
     }
 
-    public function listFiles(Request $request, $drive_id){
+    public function listFiles(Request $request, $drive_id, $folder_id=null){
         $cloud_controller_instance = $this->getCloudController($drive_id);
-        $list = $cloud_controller_instance->listFiles($request, $drive_id);
+        $list = $cloud_controller_instance->listFiles($request, $drive_id, $folder_id);
         echo $list;
     }
 
@@ -60,7 +60,7 @@ class DrivesController extends Controller
         }
     }
 
-    public function browse($drive_id){
-        return view('browse-drive', ['drive'=>\App\Drive::find($drive_id)]);
+    public function browse($drive_id, $folder_id=null){
+        return view('browse-drive', ['drive'=>\App\Drive::find($drive_id), 'folder_id'=>$folder_id]);
     }
 }

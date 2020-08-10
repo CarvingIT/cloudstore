@@ -56,7 +56,8 @@ class upload extends Command
                     $ftype = filetype($path.'/'.$f);
                     //echo $f." - ".$ftype."\n";
                     if($ftype == 'file'){
-                        $cloud_file = $c->upload($path.'/'.$f);
+                        $parent_folder_id = empty($details->cloud_id)? null : $details->cloud_id;
+                        $cloud_file = $c->upload($path.'/'.$f, $parent_folder_id); 
                         
                         $upload_entry = new UploadRecord();
                         $upload_entry->path = $path.'/'.$f;
@@ -67,6 +68,7 @@ class upload extends Command
                         $upload_entry->remote_path = $f;
                         $upload_entry->save();
                         echo $f ."\t".$cloud_file->id."\n";
+                        print_r($cloud_file->parents)."\n";
                     }
                 }
             }
