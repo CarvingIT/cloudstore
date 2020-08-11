@@ -10,26 +10,21 @@
                         <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
                             <div class="col-md-6">
-                                <input id="name" type="text" class="form-control" name="name" value="" required autofocus>
+                                <input id="name" type="text" class="form-control" name="name" value="" placeholder="Some unique name" required autofocus>
                                 <input type="hidden" name="type" value="local" />
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="path" class="col-md-4 col-form-label text-md-right">{{ __('Path') }}</label>
                             <div class="col-md-6">
-                                <input id="path" type="text" class="form-control" name="path" value="{{ old('path') }}" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="target_path" class="col-md-4 col-form-label text-md-right">{{ __('Target Path') }}</label>
-                            <div class="col-md-6">
-                                <input id="target_path" type="text" class="form-control" name="target_path" value="">
+                                <input id="path" type="text" class="form-control" name="path" value="{{ old('path') }}" placeholder="/home/username/your_dir" required>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="drive_id" class="col-md-4 col-form-label text-md-right">{{ __('Mapped Drive') }}</label>
                             <div class="col-md-6">
-                                <select class="form-control" name="drive_id">
+                                <select class="form-control" name="drive_id" required>
+                                <option value="">Select a drive</option>
                                 @foreach($drives as $drive)
                                 <option value="{{ $drive->id }}">{{ $drive->name }}</option>
                                 @endforeach
@@ -94,7 +89,8 @@
                         <div class="form-group row">
                             <label for="drive_idssh" class="col-md-4 col-form-label text-md-right">{{ __('Mapped Drive') }}</label>
                             <div class="col-md-6">
-                                <select class="form-control" id="drive_idssh" name="drive_id">
+                                <select class="form-control" id="drive_idssh" name="drive_id" required>
+                                <option value="">Select a drive</option>
                                 @foreach($drives as $drive)
                                 <option value="{{ $drive->id }}">{{ $drive->name }}</option>
                                 @endforeach
@@ -159,7 +155,8 @@
                         <div class="form-group row">
                             <label for="drive_idftp" class="col-md-4 col-form-label text-md-right">{{ __('Mapped Drive') }}</label>
                             <div class="col-md-6">
-                                <select id="drive_idftp" class="form-control" name="drive_id">
+                                <select id="drive_idftp" class="form-control" name="drive_id" required>
+                                <option value="">Select a drive</option>
                                 @foreach($drives as $drive)
                                 <option value="{{ $drive->id }}">{{ $drive->name }}</option>
                                 @endforeach
@@ -225,7 +222,7 @@
                         dialog = $( "#sourceform" ).dialog(
                             {
                                 autoOpen: false,
-                                height: 350,
+                                height: 300,
                                 width: 500,
                                 modal: true,
                             }
