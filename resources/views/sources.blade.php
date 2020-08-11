@@ -20,6 +20,12 @@
                                 <input id="path" type="text" class="form-control" name="path" value="{{ old('path') }}" required>
                             </div>
                         </div>
+                        <div class="form-group row sshfield">
+                            <label for="server" class="col-md-4 col-form-label text-md-right">{{ __('Server') }}</label>
+                            <div class="col-md-6">
+                                <input id="server" type="text" class="form-control" name="server" value="" placeholder="FQDN or IP Address">
+                            </div>
+                        </div>
                         <div class="form-group row">
                             <label for="target_path" class="col-md-4 col-form-label text-md-right">{{ __('Target Path') }}</label>
                             <div class="col-md-6">
@@ -219,6 +225,9 @@
                             { "orderable": false, "targets": 3 }
                             ]
                         });
+                        // hide all ssh fields
+                        $('.sshfield').hide();
+    
                     } );
                     
                     $( function() {
