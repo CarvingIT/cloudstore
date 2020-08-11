@@ -28,7 +28,6 @@ class SourcesController extends Controller
         $details = array();
         if($request->type == 'local'){
             $details['path'] = $request->path;
-            $details['target_path'] = $request->target_path;
         }
         else if($request->type == 'ssh'){
             $details['path'] = $request->pathssh;
@@ -46,18 +45,27 @@ class SourcesController extends Controller
         }
         else{}
 
-        if(!empty($request->target_path)){
+        // There should be an option to leave this blank (root of the drive)
+        // Following code sets a value for the directory-name on the drive
+        $details['target_path'] = $request->name; 
+
+        if(!empty($details['target_path'])){
             $drive = Drive::find($request->drive_id);
             if($drive->type == 'GoogleDrive'){
                 $dc = new GoogleDriveController($drive);
-                $dir = $dc->createDirectory($request->target_path);
+                $dir = $dc->createDirectory($details['target_path']);
                 $details['cloud_id'] = $dir->id;
             }
         }
 
         $s->details = json_encode($details);
-        $s->save();
-        return redirect('/admin/sources');
+        try{
+            $s->save();
+            return redirect('/admin/sources');
+        }
+        catch(\Exception $e){
+            return redirect('/admin/sources')->withErrors(['msg', 'There was some error!']);
+        }
     }
 
     public function delete($source_id){
