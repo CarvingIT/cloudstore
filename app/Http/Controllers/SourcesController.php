@@ -20,6 +20,10 @@ class SourcesController extends Controller
     }
 
     public function save(Request $request){
+        if(!$this->validateSourceInfo($request)){
+            $request->session()->flash('alert-danger', 'Please choose a unique name for the source.');
+            return redirect('/admin/sources');
+        }
         $s = new Source();
         $s->name = $request->name;
         $s->type = $request->type;
@@ -66,6 +70,14 @@ class SourcesController extends Controller
         catch(\Exception $e){
             return redirect('/admin/sources')->withErrors(['msg', 'There was some error!']);
         }
+    }
+
+    public function validateSourceInfo(Request $request){
+        $source = Source::where('name',$request->name)->first();
+        if($source){
+            return false;
+        }
+        return true;
     }
 
     public function delete($source_id){
