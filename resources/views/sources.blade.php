@@ -191,6 +191,11 @@
                 </div>
                 </div>
                 <div class="card-body">
+                @foreach (['danger', 'warning', 'success', 'info'] as $msg)
+                    @if( Session::has('alert-' . $msg) )
+                    <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}</p>
+                    @endif
+                @endforeach
                     <table id="sources" class="display" style="width:100%">
                         <thead>
                         <tr>
