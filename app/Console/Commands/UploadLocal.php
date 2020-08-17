@@ -51,19 +51,21 @@ class UploadLocal extends Command
                 echo 'Source: '. $s->name."\nDirectory: ". 
                 $path."\nCloud drive: ". $drive->name . " (".$drive->type.")\n";
                 // get list of files
-                $files = scandir($details->path);
+                //$files = scandir($details->path);
+                $files = $this->getDirContents($details->path);
+
                 foreach($files as $f){
-                    $ftype = filetype($path.'/'.$f);
+                    $ftype = filetype($f);
                     //echo $f." - ".$ftype."\n";
                     if($ftype == 'file'){
                         $parent_folder_id = empty($details->cloud_id)? null : $details->cloud_id;
-                        $cloud_file = $c->upload($path.'/'.$f, $parent_folder_id); 
+                        $cloud_file = $c->upload($f, $parent_folder_id); 
                         
                         $upload_entry = new UploadRecord();
-                        $upload_entry->path = $path.'/'.$f;
-                        $upload_entry->size = filesize($path.'/'.$f);
+                        $upload_entry->path = $f;
+                        $upload_entry->size = filesize($f);
                         $upload_entry->cloud_file_id = $cloud_file->id;
-                        $upload_entry->modification_time = date ("Y-m-d H:i:s.", filemtime($path.'/'.$f));
+                        $upload_entry->modification_time = date ("Y-m-d H:i:s.", filemtime($f));
                         $upload_entry->drive_id = $s->drive_id;
                         $upload_entry->remote_path = $f;
                         $upload_entry->save();
@@ -74,5 +76,20 @@ class UploadLocal extends Command
             }
         }
         return 0;
+    }
+
+    private function getDirContents($dir, &$results = array()) {
+        $files = scandir($dir);
+
+        foreach ($files as $key => $value) {
+            $path = realpath($dir . DIRECTORY_SEPARATOR . $value);
+            if (!is_dir($path)) {
+                $results[] = $path;
+            } else if ($value != "." && $value != "..") {
+                $this->getDirContents($path, $results);
+                $results[] = $path;
+            }
+        }
+        return $results;
     }
 }
