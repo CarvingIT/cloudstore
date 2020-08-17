@@ -8,7 +8,7 @@ use App\Drive;
 use App\UploadRecord;
 use App\Http\Controllers\GoogleDriveController;
 
-class upload extends Command
+class UploadLocal extends Command
 {
     /**
      * The name and signature of the console command.
