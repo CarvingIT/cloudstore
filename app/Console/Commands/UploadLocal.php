@@ -57,21 +57,19 @@ class UploadLocal extends Command
                 foreach($files as $f){
                     $ftype = filetype($f);
                     //echo $f." - ".$ftype."\n";
-                    if($ftype == 'file'){
-                        $parent_folder_id = empty($details->cloud_id)? null : $details->cloud_id;
-                        $cloud_file = $c->upload($f, $parent_folder_id); 
+                    $parent_folder_id = empty($details->cloud_id)? null : $details->cloud_id;
+                    $cloud_file = $c->upload($f, $details->path, $parent_folder_id); 
                         
-                        $upload_entry = new UploadRecord();
-                        $upload_entry->path = $f;
-                        $upload_entry->size = filesize($f);
-                        $upload_entry->cloud_file_id = $cloud_file->id;
-                        $upload_entry->modification_time = date ("Y-m-d H:i:s.", filemtime($f));
-                        $upload_entry->drive_id = $s->drive_id;
-                        $upload_entry->remote_path = $f;
-                        $upload_entry->save();
-                        echo $f ."\t".$cloud_file->id."\n";
-                        print_r($cloud_file->parents)."\n";
-                    }
+                    $upload_entry = new UploadRecord();
+                    $upload_entry->path = $f;
+                    $upload_entry->size = filesize($f);
+                    $upload_entry->cloud_file_id = $cloud_file->id;
+                    $upload_entry->modification_time = date ("Y-m-d H:i:s.", filemtime($f));
+                    $upload_entry->drive_id = $s->drive_id;
+                    $upload_entry->remote_path = $f;
+                    $upload_entry->save();
+                    echo $f ."\t".$cloud_file->id."\n";
+                    print_r($cloud_file->parents)."\n";
                 }
             }
         }
@@ -87,7 +85,6 @@ class UploadLocal extends Command
                 $results[] = $path;
             } else if ($value != "." && $value != "..") {
                 $this->getDirContents($path, $results);
-                $results[] = $path;
             }
         }
         return $results;

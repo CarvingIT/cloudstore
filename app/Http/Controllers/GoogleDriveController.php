@@ -40,21 +40,19 @@ class GoogleDriveController extends Controller
         return $client;
     }
 
-    public function upload($path, $parent_id=null){ 
+    public function upload($path, $minus_path, $parent_id=null){ 
         $client = $this->getClient();
+
         $service = new Google_Service_Drive($client);
+        $cloud_filename = $path;
+        $path_reg = '#'.$minus_path.'/#';
+
+        $cloud_filename = preg_replace($path_reg,'',$cloud_filename);
         if(!empty($parent_id)){
-            $meta_data_args = array('name'=>basename($path), 'parents'=>array($parent_id));
-            /*
-            print_r(json_encode($meta_data_args));
-            exit;
-            */
-            //$parent_folder =  new Google_Service_Drive_DriveFile(array('id'=>$parent_id));
-            //$meta_data_args['parents'] = json_encode(array(array('id'=>$parent_id)));
-            //$fileMetadata->setParents(json_encode(array(array('id'=>$parent_id))));
+            $meta_data_args = array('name'=>$cloud_filename, 'parents'=>array($parent_id));
         }
         else{
-            $meta_data_args = array('name'=>basename($path));
+            $meta_data_args = array('name'=>$cloud_filename);
         }
         $fileMetadata = new Google_Service_Drive_DriveFile($meta_data_args);
         $content = file_get_contents($path);

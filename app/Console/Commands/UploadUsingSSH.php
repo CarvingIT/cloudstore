@@ -60,18 +60,36 @@ class UploadUsingSSH extends Command
                 // get list of files
                 $files = $this->scanSSHDir($details);
                 foreach($files as $f){
+                    $source_with_proto = $f;
                     $f = preg_replace('#ssh2.sftp://(\d+)/#','/',$f);
                     $source = $f;
                     $path_reg = '#'.$path.'#';
                     $f = preg_replace($path_reg,'',$f);
-                    $target = Storage::disk('local')->getAdapter()->getPathPrefix().$this->temp_dir.'/'.$f;
-                    $this->makePath($target);
-                    echo "Copying -$source- to -$target-\n";
+                    $tmp_dir = Storage::disk('local')->getAdapter()->getPathPrefix().$this->temp_dir;
+                    $local_path = $tmp_dir.$f;
+                    $this->makePath($local_path);
                     try{
-                        ssh2_scp_recv($this->connection, $source, $target);
+                        echo "Copying $source to $local_path\n";
+                        ssh2_scp_recv($this->connection, $source, $local_path);
+                        echo "Uploading $local_path to cloud folder - $details->target_path/\n";
+                        $parent_folder_id = empty($details->cloud_id)? null : $details->cloud_id;
+                        //echo $parent_folder_id;
+                        $cloud_file = $c->upload($local_path, $tmp_dir, $parent_folder_id); 
+                        //$cloud_file = $c->upload($local_path); 
+
+                        $upload_entry = new UploadRecord();
+                        $upload_entry->path = $source_with_proto; 
+                        $upload_entry->size = filesize($local_path);
+                        $upload_entry->cloud_file_id = $cloud_file->id;
+                        $upload_entry->modification_time = date ("Y-m-d H:i:s.", filemtime($source_with_proto));
+                        $upload_entry->drive_id = $s->drive_id;
+                        $upload_entry->remote_path = $details->target_path.'/'.$f; 
+                        $upload_entry->save();
+                        echo $source ."\t".$cloud_file->id."\n";
                     }
                     catch(\Exception $e){
                         echo $e->getMessage()."\n";
+                        exit;
                     }
                 }
             }
